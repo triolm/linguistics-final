@@ -1,56 +1,43 @@
-import random
-from ngram import NGram
+import time
 import eng_to_ipa as ipa
+from textgeneration import *
+import matplotlib.pyplot as plt
+import numpy as np
 
 text = None;
-with open('./data/sherlock.txt', 'r') as file:
+sourceText = "sherlock"
+n = 5
+stop_seq = "a"
+
+
+with open('./data/' + sourceText + '.txt', 'r') as file:
     text = file.read()
+    text = text[1 : 200000]
+    text = ipa.convert(text, stress_marks=False);
 
-    # text = text[1 : 200000]
-    # text = ipa.convert(text);
+ngramStart = time.time()
 
-def getNgram(ngrams, str):
-    ngram = ngrams.get(str)
-    if(not ngram):
-       ngram = NGram(str)
-       ngrams[str] = ngram;
-    return ngram
+ngrams = getNRgams(text, n, stop_seq = stop_seq)
+print("generated ngrams in " + str(round((time.time() - ngramStart) * 1000)) + "ms.")
 
-def getNRgams(text, n, **kwargs):
-    ngrams = {}
-    for i in range(len(text) - (n-1)):
-        substr = text[i: i+(n-1)]
-        next = text[i + (n-1)]
-        if(kwargs.get("stop_seq")):
-            if(kwargs.get("stop_seq") in substr or kwargs.get("stop_seq") in next):
-                continue;
+keys = np.array(list(ngrams.keys()))
+vals = np.array([i["count"] for i in ngrams.values()])
 
-        ngram = getNgram(ngrams, substr)
-        ngram.add(next)
-    return ngrams
+mask = vals > 200
 
-def generate(ngrams, n, characters):
-    built = text[0:n-1]
-    i = 0
-    while i < characters:
-        if(1 % 10 == 0):
-            print(built)
-        
-        while(True):
-            try:
-                substr = built[len(built)-(n-1):len(built)]
-                rand = ngrams[substr].getRand();
-                break;
-            except:
-                remove = random.randint(1, n * 2)
-                i -= remove
-                built = built[0:len(built) - (remove)]
-        
-        built += rand
-        i += 1
+print(len(mask))
+print(len(keys))
 
-    return built
+plt.bar(keys[mask],vals[mask])
+plt.xticks(rotation=90)
+plt.show()
 
-n = 9
-ngrams = getNRgams(text, n, stop_seq = "e")
-print(generate(ngrams,n, 2000))
+# generateStart = time.time()
+# out = generate(text, ngrams, n, 2000)
+# print("generated output in " + str(round((time.time() - generateStart) * 1000)) + "ms.")
+# print("Finished in " + str(round((time.time() - ngramStart) * 1000)) + "ms.")
+
+
+# f = open("./output/" + sourceText + ("-removed-" + stop_seq + "-" if stop_seq else "-") + str(time.time()) + ".txt", "x")
+# f.write(out)
+# f.close
