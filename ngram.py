@@ -21,11 +21,11 @@ class NGram:
     def get(self, str):
         return dict.get(str)
     
-    def getFirst(self):
+    def get_first(self):
         for i in self.children:
             return i;
         
-    def getRand(self):
+    def get_rand(self):
         total = 0;
         for i in self.children:
             total += self.children[i].get("weight")
@@ -37,4 +37,4 @@ class NGram:
             if(randSum >= rand):
                 return i;
 
-        return self.getFirst()
+        return self.get_first()

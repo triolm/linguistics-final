@@ -1,36 +1,25 @@
 import time
 import eng_to_ipa as ipa
+from plots import *
 from textgeneration import *
-import matplotlib.pyplot as plt
-import numpy as np
 
 text = None;
-sourceText = "sherlock"
-n = 5
+sourceText = "shakespeare"
+n = 2
 stop_seq = "a"
 
 
 with open('./data/' + sourceText + '.txt', 'r') as file:
     text = file.read()
-    text = text[1 : 200000]
-    text = ipa.convert(text, stress_marks=False);
+    # text = text[1 : 200000]
+    # text = ipa.convert(text, stress_marks=False);
 
 ngramStart = time.time()
 
-ngrams = getNRgams(text, n, stop_seq = stop_seq)
+ngrams = get_ngrams(text, n)
 print("generated ngrams in " + str(round((time.time() - ngramStart) * 1000)) + "ms.")
 
-keys = np.array(list(ngrams.keys()))
-vals = np.array([i["count"] for i in ngrams.values()])
-
-mask = vals > 200
-
-print(len(mask))
-print(len(keys))
-
-plt.bar(keys[mask],vals[mask])
-plt.xticks(rotation=90)
-plt.show()
+plot_ngram_children(get_ngram(ngrams, "t"), 40, omitWhitespace = True)
 
 # generateStart = time.time()
 # out = generate(text, ngrams, n, 2000)
