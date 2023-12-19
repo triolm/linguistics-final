@@ -34,21 +34,16 @@ def generate(text, ngrams, n, characters):
     built = text[0:n-1]
     i = 0
     while i < characters:
-        if(1 % 10 == 0):
-            print(built)
-        
         while(True):
             try:
                 substr = built[len(built)-(n-1):len(built)]
-                rand = ngrams[substr].get_rand();
+                rand = ngrams[substr].get("ngram").get_rand();
                 break;
             except Exception as e:
                 if(i > n):
                     remove = random.randint(1, n * 2)
                     i -= remove
                     built = built[0:len(built) - (remove)]
-        
         built += rand
         i += 1
-
     return built
