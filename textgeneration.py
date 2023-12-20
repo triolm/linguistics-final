@@ -19,31 +19,31 @@ def get_ngrams(text, n, **kwargs):
     for i in range(len(text) - (n-1)):
         substr = text[i: i+(n-1)]
         next = text[i + (n-1)]
-        if(kwargs.get("stop_seq") and kwargs.get("stop_seq") in substr.lower()):
+        if(kwargs.get("stop_seq") and (kwargs.get("stop_seq") in substr.lower() or kwargs.get("stop_seq") in next.lower())):
             continue;
         
         ngram = get_ngram(ngrams, substr, True)
-            
-        if (kwargs.get("stop_seq") and kwargs.get("stop_seq") in next.lower()):
-            continue;
-
         ngram.add(next)
     return ngrams
 
 def generate(text, ngrams, n, characters):
     built = text[0:n-1]
+    chars = 0
     i = 0
-    while i < characters:
+    while chars < characters:
         while(True):
+            i+=1
+            if(i > 20 * characters):
+                raise Exception("Unable to generate text: Too many iterations")
             try:
                 substr = built[len(built)-(n-1):len(built)]
                 rand = ngrams[substr].get("ngram").get_rand();
                 break;
             except Exception as e:
-                if(i > n):
+                if(chars > n):
                     remove = random.randint(1, n * 2)
-                    i -= remove
+                    chars -= remove
                     built = built[0:len(built) - (remove)]
         built += rand
-        i += 1
+        chars += 1
     return built

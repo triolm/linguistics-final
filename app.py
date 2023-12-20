@@ -9,11 +9,12 @@ app_ui = ui.page_fluid(
                 ui.panel_sidebar(
                     ui.input_selectize("sourcetext", "Source Text", ["shakespeare", "sherlock","riddleywalker"], selected=None, multiple=False, width=None),
                     ui.input_numeric("characters", "Characters", 50, min = 10, max = 7500),
+                    ui.input_text("stopchar", "Stop Character"),
                     ui.input_slider("n", "N", 1, 10, 3),
                     ui.input_checkbox_group("settings", "", ["ipa"], selected=None, inline=False, width=None),
                 ),
                 ui.panel_main(
-                    ui.output_text("txt"),  
+                    ui.output_text_verbatim("txt"),  
                 ),
             ),
         ),
@@ -53,14 +54,14 @@ def server(input, output, session):
     @render.text
     def txt():
         settings = input.settings()
-        text = generate_text_from(input.sourcetext(),input.n(), input.characters(), ipa = "ipa" in settings)
+        text = generate_text_from(input.sourcetext(),input.n(), input.characters(), ipa = "ipa" in settings, stop_seq = input.stopchar())
         # print("regenerated text")
         return text
     @render.plot
     def plot():
         plot = None
         settings = input.plot_settings()
-        plot = plot_ngrams_from(input.plot_sourcetext(), input.plot_n(), input.plot_nbars() , ipa = "ipa" in settings,omit_whitespace = "omit_whitespace" in settings)
+        plot = plot_ngrams_from(input.plot_sourcetext(), input.plot_n() + 1, input.plot_nbars() , ipa = "ipa" in settings,omit_whitespace = "omit_whitespace" in settings)
         # print("generated plot")
         plot
     @render.plot

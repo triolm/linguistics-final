@@ -13,6 +13,12 @@ def open_text_file(textName, **kwargs):
             text = ipa.convert(text, stress_marks=False);
     return text;
 
+def to_ipa(text):
+   converted = ""
+   while(len(text)):
+       converted += ipa.covert(text[0: 200000 if len(text) > 200000 else len(text)])
+       text = text[text[200000 if len(text) > 200000 else len(text)]: len(text)]
+
 def plot_ngrams_from(sourceText, n, nPlot, **kwargs):
     text = open_text_file(sourceText, ipa = kwargs.get("ipa"))
     ngramStart = time.time()

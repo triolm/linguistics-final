@@ -35,5 +35,7 @@ def plot_dict(keys, vals, nShow, **kwargs):
 
     plt.bar("keys", "vals", data=df)
     plt.xticks(rotation=60)
+    plt.xlabel("string")
+    plt.ylabel("occurances in text")
     # plt.show()
     return plt
