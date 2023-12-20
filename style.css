@@ -1,0 +1,32 @@
+body .container-fluid{
+    padding: 0;
+    margin:0;
+}
+
+a.nav-link.active, nav .navbar-brand{
+    color:white!important;
+}
+
+a.nav-link{
+    color:lightgray;
+}
+
+nav{
+    padding:10px 20px!important;
+}
+
+body .container-fluid  > div.html-fill-container{
+    padding: 10px!important;
+}
+
+.sidebar-content{
+    border-bottom: var(--bslib-sidebar-border, var(--bs-card-border-width, var(--bs-border-width)) solid var(--bs-card-border-color, var(--bs-border-color-translucent)));
+    border-left: var(--bslib-sidebar-border, var(--bs-card-border-width, var(--bs-border-width)) solid var(--bs-card-border-color, var(--bs-border-color-translucent)));
+    
+}
+
+.bslib-sidebar-layout  > div.html-fill-container{
+    border-bottom: var(--bslib-sidebar-border, var(--bs-card-border-width, var(--bs-border-width)) solid var(--bs-card-border-color, var(--bs-border-color-translucent)));
+    border-right: var(--bslib-sidebar-border, var(--bs-card-border-width, var(--bs-border-width)) solid var(--bs-card-border-color, var(--bs-border-color-translucent)));
+
+}

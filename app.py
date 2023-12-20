@@ -2,7 +2,8 @@ from shiny import ui, render, App
 from outputs import *
 
 app_ui = ui.page_fluid(
-    ui.navset_tab(
+    ui.include_css("style.css"),
+    ui.navset_bar(
         ui.nav(
             "Generate Text",
             ui.layout_sidebar(
@@ -46,6 +47,8 @@ app_ui = ui.page_fluid(
                 ),
             ),
         ),
+        title = "English Final",
+        inverse=True
     ),
 )
 
