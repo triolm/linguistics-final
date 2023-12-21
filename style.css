@@ -7,6 +7,10 @@ a.nav-link.active, nav .navbar-brand{
     color:white!important;
 }
 
+a.nav-link:hover{
+    color:white;
+}
+
 a.nav-link{
     color:lightgray;
 }

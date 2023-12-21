@@ -8,10 +8,10 @@ app_ui = ui.page_fluid(
             "Generate Text",
             ui.layout_sidebar(
                 ui.panel_sidebar(
-                    ui.input_selectize("sourcetext", "Source Text", ["shakespeare", "sherlock","riddleywalker"], selected=None, multiple=False, width=None),
-                    ui.input_numeric("characters", "Characters", 50, min = 10, max = 7500),
-                    ui.input_text("stopchar", "Stop Character"),
-                    ui.input_slider("n", "N", 1, 10, 3),
+                    ui.input_selectize("sourcetext", "Source Text", ["shakespeare", "sherlock","riddleywalker","spam", "twitter"], selected=None, multiple=False, width=None),
+                    ui.input_numeric("characters", "Characters", 500, min = 10, max = 7500),
+                    ui.input_text("stopchar", "Stop Sequence"),
+                    ui.input_slider("n", "N", 1, 10, 5),
                     ui.input_checkbox_group("settings", "", ["ipa"], selected=None, inline=False, width=None),
                 ),
                 ui.panel_main(
@@ -23,7 +23,7 @@ app_ui = ui.page_fluid(
             "Generate Plot",
             ui.layout_sidebar(
                 ui.panel_sidebar(
-                    ui.input_selectize("plot_sourcetext", "Source Text", ["shakespeare", "sherlock","riddleywalker"], selected=None, multiple=False, width=None),
+                    ui.input_selectize("plot_sourcetext", "Source Text", ["shakespeare", "sherlock","riddleywalker","spam", "twitter"], selected=None, multiple=False, width=None),
                     ui.input_slider("plot_n", "N", 1, 10, 3),
                     ui.input_slider("plot_nbars", "Number of bars", 5, 100, 20),
                     ui.input_checkbox_group("plot_settings", "", ["ipa", "omit_whitespace"], selected=None, inline=False, width=None),
@@ -37,7 +37,7 @@ app_ui = ui.page_fluid(
             "Generate Following Character Plot",
             ui.layout_sidebar(
                 ui.panel_sidebar(
-                    ui.input_selectize("children_sourcetext", "Source Text", ["shakespeare", "sherlock","riddleywalker"], selected=None, multiple=False, width=None),
+                    ui.input_selectize("children_sourcetext", "Source Text", ["shakespeare", "sherlock","riddleywalker","spam", "twitter"], selected=None, multiple=False, width=None),
                     ui.input_text("children_str", "Preceeding string", value="e"),
                     ui.input_slider("children_nbars", "Number of bars", 5, 100, 20),
                     ui.input_checkbox_group("children_settings", "", ["ipa", "omit_whitespace"], selected=None, inline=False, width=None),
@@ -65,7 +65,10 @@ def server(input, output, session):
         plot = None
         settings = input.plot_settings()
         plot = plot_ngrams_from(input.plot_sourcetext(), input.plot_n() + 1, input.plot_nbars() , ipa = "ipa" in settings,omit_whitespace = "omit_whitespace" in settings)
-        # print("generated plot")
+        try:
+            plot.title(input.plot_sourcetext() + (" ipa analysis " if "ipa" in settings else " analysis ") + "n =" + str(input.plot_n()))
+        except Exception as e:
+            print(e)
         plot
     @render.plot
     def children_plot():
@@ -73,7 +76,7 @@ def server(input, output, session):
         settings = input.children_settings()
         print("eee")
         plot = plot_ngram_children_from(input.children_sourcetext(), input.children_str(), input.children_nbars() , ipa = "ipa" in settings,omit_whitespace = "omit_whitespace" in settings)
-        # print("generated plot")
+        plot.title((" ipa characters following " if "ipa" in settings else " characters folliwng ") + input.children_str() + " in " + input.plot_sourcetext())
         plot
 
 app = App(app_ui, server)
