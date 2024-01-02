@@ -1,6 +1,8 @@
 from shiny import ui, render, App
 from outputs import *
 
+texts = get_text_files()
+
 app_ui = ui.page_fluid(
     ui.include_css("style.css"),
     ui.navset_bar(
@@ -8,7 +10,7 @@ app_ui = ui.page_fluid(
             "Generate Text",
             ui.layout_sidebar(
                 ui.panel_sidebar(
-                    ui.input_selectize("sourcetext", "Source Text", ["shakespeare", "sherlock","riddleywalker","spam", "twitter"], selected=None, multiple=False, width=None),
+                    ui.input_selectize("sourcetext", "Source Text", texts, selected=None, multiple=False, width=None),
                     ui.input_numeric("characters", "Characters", 500, min = 10, max = 7500),
                     ui.input_text("stopchar", "Stop Sequence"),
                     ui.input_slider("n", "N", 1, 10, 5),
@@ -23,7 +25,7 @@ app_ui = ui.page_fluid(
             "Generate Plot",
             ui.layout_sidebar(
                 ui.panel_sidebar(
-                    ui.input_selectize("plot_sourcetext", "Source Text", ["shakespeare", "sherlock","riddleywalker","spam", "twitter"], selected=None, multiple=False, width=None),
+                    ui.input_selectize("plot_sourcetext", "Source Text", texts, selected=None, multiple=False, width=None),
                     ui.input_slider("plot_n", "N", 1, 10, 3),
                     ui.input_slider("plot_nbars", "Number of bars", 5, 100, 20),
                     ui.input_checkbox_group("plot_settings", "", ["ipa", "omit_whitespace"], selected=None, inline=False, width=None),
@@ -37,7 +39,7 @@ app_ui = ui.page_fluid(
             "Generate Following Character Plot",
             ui.layout_sidebar(
                 ui.panel_sidebar(
-                    ui.input_selectize("children_sourcetext", "Source Text", ["shakespeare", "sherlock","riddleywalker","spam", "twitter"], selected=None, multiple=False, width=None),
+                    ui.input_selectize("children_sourcetext", "Source Text", texts, selected=None, multiple=False, width=None),
                     ui.input_text("children_str", "Preceeding string", value="e"),
                     ui.input_slider("children_nbars", "Number of bars", 5, 100, 20),
                     ui.input_checkbox_group("children_settings", "", ["ipa", "omit_whitespace"], selected=None, inline=False, width=None),

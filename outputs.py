@@ -2,11 +2,16 @@ import time
 import eng_to_ipa as ipa
 from plots import *
 from textgeneration import *
+import os
+
+def get_text_files():
+    for root, dirs, files in os.walk("./data", topdown=False):
+        return files
 
 def open_text_file(textName, **kwargs):
     text = None;
 
-    with open('./data/' + textName + '.txt', 'r') as file:
+    with open('./data/' + textName, 'r', encoding="utf8") as file:
         text = file.read()
         if(kwargs.get("ipa")):
             text = text[1 : 200000]
