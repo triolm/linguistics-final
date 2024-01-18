@@ -10,12 +10,23 @@ def get_text_files():
 
 def open_text_file(textName, **kwargs):
     text = None;
+    if  kwargs.get("iscustom"):
+        if(len(kwargs.get("custom_text")) < 10):
+            raise Exception("Custom text too short")
+        text = kwargs.get("custom_text")
+        #removes issues with text being very short
+        if(" " in text):
+            text = text + " " + text
+    else:
+        with open('./data/' + textName, 'r', encoding="utf8") as file:
+            text = file.read()
+    
+    if(kwargs.get("lowercase")):
+        text = text.lower();
 
-    with open('./data/' + textName, 'r', encoding="utf8") as file:
-        text = file.read()
-        if(kwargs.get("ipa")):
-            text = text[1 : 200000]
-            text = ipa.convert(text, stress_marks=False);
+    if(kwargs.get("ipa")):
+        text = text[1 : 200000]
+        text = ipa.convert(text, stress_marks=False);
     return text;
 
 def to_ipa(text):
@@ -25,7 +36,7 @@ def to_ipa(text):
        text = text[text[200000 if len(text) > 200000 else len(text)]: len(text)]
 
 def plot_ngrams_from(sourceText, n, nPlot, **kwargs):
-    text = open_text_file(sourceText, ipa = kwargs.get("ipa"))
+    text = open_text_file(sourceText, ipa = kwargs.get("ipa"), custom_text = kwargs.get("custom_text"), lowercase = kwargs.get("lowercase"), iscustom = kwargs.get("iscustom"))
     ngramStart = time.time()
     ngrams = get_ngrams(text, n, stop_seq = kwargs.get("stop_seq"))
     # print("generated ngrams in " + str(round((time.time() - ngramStart) * 1000)) + "ms.")
@@ -33,7 +44,7 @@ def plot_ngrams_from(sourceText, n, nPlot, **kwargs):
     return plot_ngrams(ngrams, nPlot, omit_whitespace = kwargs.get("omit_whitespace"),remove_highest = kwargs.get("remove_highest"))
 
 def plot_ngram_children_from(sourceText, parent, nPlot, **kwargs):
-    text = open_text_file(sourceText, ipa = kwargs.get("ipa"))
+    text = open_text_file(sourceText, ipa = kwargs.get("ipa"), custom_text = kwargs.get("custom_text"), lowercase = kwargs.get("lowercase"), iscustom = kwargs.get("iscustom"))
     ngramStart = time.time()
     ngrams = get_ngrams(text, len(parent) + 1, stop_seq = kwargs.get("stop_seq"))
     # print("generated ngrams in " + str(round((time.time() - ngramStart) * 1000)) + "ms.")
@@ -42,7 +53,7 @@ def plot_ngram_children_from(sourceText, parent, nPlot, **kwargs):
 
 
 def generate_text_from(sourceText, n, characters, **kwargs):
-    text = open_text_file(sourceText, ipa = kwargs.get("ipa"))
+    text = open_text_file(sourceText, ipa = kwargs.get("ipa"),custom_text = kwargs.get("custom_text"), lowercase = kwargs.get("lowercase"), iscustom = kwargs.get("iscustom"))
     
     ngramStart = time.time()
     ngrams = get_ngrams(text, n, stop_seq = kwargs.get("stop_seq"))

@@ -2,6 +2,7 @@ from shiny import ui, render, App
 from outputs import *
 
 texts = get_text_files()
+texts.append("custom")
 
 app_ui = ui.page_fluid(
     ui.include_css("style.css"),
@@ -11,10 +12,13 @@ app_ui = ui.page_fluid(
             ui.layout_sidebar(
                 ui.panel_sidebar(
                     ui.input_selectize("sourcetext", "Source Text", texts, selected=None, multiple=False, width=None),
+                    ui.panel_conditional("input.sourcetext == 'custom'",
+                                        ui.input_text_area("custom", "Custom text")
+                                         ),
                     ui.input_numeric("characters", "Characters", 500, min = 10, max = 7500),
                     ui.input_text("stopchar", "Stop Sequence"),
                     ui.input_slider("n", "N", 1, 10, 5),
-                    ui.input_checkbox_group("settings", "", ["ipa"], selected=None, inline=False, width=None),
+                    ui.input_checkbox_group("settings", "", ["ipa", "case insensitive"], selected=None, inline=False, width=None),
                 ),
                 ui.panel_main(
                     ui.output_text_verbatim("txt"),  
@@ -26,9 +30,12 @@ app_ui = ui.page_fluid(
             ui.layout_sidebar(
                 ui.panel_sidebar(
                     ui.input_selectize("plot_sourcetext", "Source Text", texts, selected=None, multiple=False, width=None),
+                    ui.panel_conditional("input.plot_sourcetext == 'custom'",
+                                        ui.input_text_area("plot_custom", "Custom text")
+                                         ),
                     ui.input_slider("plot_n", "N", 1, 10, 3),
                     ui.input_slider("plot_nbars", "Number of bars", 5, 100, 20),
-                    ui.input_checkbox_group("plot_settings", "", ["ipa", "omit_whitespace"], selected=None, inline=False, width=None),
+                    ui.input_checkbox_group("plot_settings", "", ["ipa", "omit_whitespace", "case insensitive"], selected=None, inline=False, width=None),
                 ),
                 ui.panel_main(
                     ui.output_plot("plot"),
@@ -40,9 +47,12 @@ app_ui = ui.page_fluid(
             ui.layout_sidebar(
                 ui.panel_sidebar(
                     ui.input_selectize("children_sourcetext", "Source Text", texts, selected=None, multiple=False, width=None),
+                    ui.panel_conditional("input.children_sourcetext == 'custom'",
+                                        ui.input_text_area("children_custom", "Custom text")
+                                         ),
                     ui.input_text("children_str", "Preceeding string", value="e"),
                     ui.input_slider("children_nbars", "Number of bars", 5, 100, 20),
-                    ui.input_checkbox_group("children_settings", "", ["ipa", "omit_whitespace"], selected=None, inline=False, width=None),
+                    ui.input_checkbox_group("children_settings", "", ["ipa", "omit_whitespace", "case insensitive"], selected=None, inline=False, width=None),
                 ),
                 ui.panel_main(
                     ui.output_plot("children_plot"),
@@ -59,14 +69,14 @@ def server(input, output, session):
     @render.text
     def txt():
         settings = input.settings()
-        text = generate_text_from(input.sourcetext(),input.n(), input.characters(), ipa = "ipa" in settings, stop_seq = input.stopchar())
+        text = generate_text_from(input.sourcetext(),input.n(), input.characters(), ipa = "ipa" in settings,lowercase = "case insensitive" in settings, stop_seq = input.stopchar(), custom_text = input.custom(), iscustom = input.sourcetext() == "custom")
         # print("regenerated text")
         return text
     @render.plot
     def plot():
         plot = None
         settings = input.plot_settings()
-        plot = plot_ngrams_from(input.plot_sourcetext(), input.plot_n() + 1, input.plot_nbars() , ipa = "ipa" in settings,omit_whitespace = "omit_whitespace" in settings)
+        plot = plot_ngrams_from(input.plot_sourcetext(), input.plot_n() + 1, input.plot_nbars() , ipa = "ipa" in settings,lowercase = "case insensitive" in settings,omit_whitespace = "omit_whitespace" in settings, custom_text = input.plot_custom(), iscustom = input.sourcetext() == "custom")
         try:
             plot.title(input.plot_sourcetext() + (" ipa analysis " if "ipa" in settings else " analysis ") + "n =" + str(input.plot_n()))
         except Exception as e:
@@ -76,8 +86,7 @@ def server(input, output, session):
     def children_plot():
         plot = None
         settings = input.children_settings()
-        print("eee")
-        plot = plot_ngram_children_from(input.children_sourcetext(), input.children_str(), input.children_nbars() , ipa = "ipa" in settings,omit_whitespace = "omit_whitespace" in settings)
+        plot = plot_ngram_children_from(input.children_sourcetext(), input.children_str(), input.children_nbars() , ipa = "ipa" in settings,lowercase = "case insensitive" in settings,omit_whitespace = "omit_whitespace" in settings, custom_text = input.children_custom(), iscustom = input.sourcetext() == "custom")
         plot.title((" ipa characters following " if "ipa" in settings else " characters folliwng ") + input.children_str() + " in " + input.plot_sourcetext())
         plot
 

@@ -33,7 +33,7 @@ def generate(text, ngrams, n, characters):
     while chars < characters:
         while(True):
             i+=1
-            if(i > 20 * characters):
+            if(i > 40 * characters):
                 raise Exception("Unable to generate text: Too many iterations")
             try:
                 substr = built[len(built)-(n-1):len(built)]

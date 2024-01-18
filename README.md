@@ -11,7 +11,7 @@ In this application, the user can change the length of the ngrams to observe the
 
 
 # How to Run
-- Clone this repo and navigate into its directory
+- Clone this repo (if it's not already downloaded) and navigate into its directory
 ```
 git clone https://github.com/triolm/linguistics-final.git
 cd linguistics-final
@@ -20,6 +20,7 @@ cd linguistics-final
 ```
 pip install -r requirements.txt
 ```
+- Create the ./data directory (if it doesn't already exist) and add text files to analyze
 - Run app (on macos) with 
 ```
 python3 -m shiny run
